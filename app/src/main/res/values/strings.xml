@@ -4,4 +4,7 @@
     <string name="login_with_twitter">Login with Twitter</string>
     <string name="welcome_subhead">See what\'s happening in the world right now</string>
     <string name="dot">&#8226;</string>
+    <string name="tweeet">Tweet</string>
+    <string name="c140">140</string>
+    <string name="whats_happening">What\'s Happening?</string>
 </resources>

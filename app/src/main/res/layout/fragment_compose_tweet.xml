@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_margin="24dp">
+
+    <RelativeLayout
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/close"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:layout_marginTop="12dp"
+            android:src="@drawable/ic_close_black"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"/>
+
+        <ImageView
+            android:id="@+id/imageProfileImage"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            tools:src="@mipmap/ic_launcher"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"/>
+
+        <TextView
+            android:id="@+id/tvName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:layout_marginRight="4dp"
+            android:layout_toLeftOf="@id/imageProfileImage"
+            tools:text="Aditya Modi"/>
+
+        <TextView
+            android:id="@+id/tvScreenName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="4dp"
+            android:layout_toLeftOf="@id/imageProfileImage"
+            android:layout_below="@id/tvName"
+            tools:text="\@modiaditya"/>
+    </RelativeLayout>
+
+    <EditText
+        android:id="@+id/tvTweetBody"
+        android:layout_width="match_parent"
+        android:gravity="top"
+        android:layout_height="150dp"
+        android:hint="@string/whats_happening"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:id="@+id/buttonTweet"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/tweeet"
+            android:background="@color/colorPrimary"
+            android:textColor="@android:color/white"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"/>
+
+        <TextView
+            android:id="@+id/tvCharacterCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@id/buttonTweet"
+            android:text="@string/c140"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="12dp"
+            android:textAppearance="@style/Base.TextAppearance.AppCompat.Subhead"/>
+
+    </RelativeLayout>
+
+    </LinearLayout>
+
+
+
+</RelativeLayout>

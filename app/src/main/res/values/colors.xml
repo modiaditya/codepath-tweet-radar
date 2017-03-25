@@ -4,4 +4,7 @@
     <color name="colorPrimaryDark">#036FAC</color>
     <color name="colorAccent">#FF4081</color>
     <color name="twitterBlue">#059FF6</color>
+    <color name="retweet">#19CF86</color>
+    <color name="favorite">#E81C4F</color>
+    <color name="deactivate">#AAB8C2</color>
 </resources>

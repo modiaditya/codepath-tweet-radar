@@ -1,8 +1,15 @@
 package com.aditya.tweetradar.models;
 
+import com.aditya.tweetradar.database.TweetRadarDatabase;
+import com.raizlabs.android.dbflow.annotation.Column;
+import com.raizlabs.android.dbflow.annotation.ForeignKey;
+import com.raizlabs.android.dbflow.annotation.PrimaryKey;
+import com.raizlabs.android.dbflow.annotation.Table;
+import com.raizlabs.android.dbflow.structure.BaseModel;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.parceler.Parcel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,60 +18,41 @@ import java.util.List;
  * Created by amodi on 3/23/17.
  */
 
-public class Tweet {
+@Table(database = TweetRadarDatabase.class)
+@Parcel(analyze = {Tweet.class})
+public class Tweet extends BaseModel {
 
-    public Long idLong;
-    public String id;
+    @Column
+    @PrimaryKey
+    public Long id;
+
+    @Column
     public String createdAt;
+
+    @Column
     public int favoriteCount;
+
+    @Column
     public boolean isFavorited;
+
+    @Column
     public int retweetCount;
+
+    @Column
     public boolean isRetweeted;
+
+    @Column
     public String text;
+
+    @Column
+    @ForeignKey
     public User user;
-
-    public Long getIdLong() {
-        return idLong;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public String getCreatedAt() {
-        return createdAt;
-    }
-
-    public int getFavoriteCount() {
-        return favoriteCount;
-    }
-
-    public boolean isFavorited() {
-        return isFavorited;
-    }
-
-    public int getRetweetCount() {
-        return retweetCount;
-    }
-
-    public boolean isRetweeted() {
-        return isRetweeted;
-    }
-
-    public String getText() {
-        return text;
-    }
-
-    public User getUser() {
-        return user;
-    }
 
     public static Tweet fromJSON(JSONObject object) {
         Tweet tweet = new Tweet();
         try {
             tweet.text = object.getString("text");
-            tweet.id = object.getString("id_str");
-            tweet.idLong = object.getLong("id");
+            tweet.id = object.getLong("id");
             tweet.createdAt = object.getString("created_at");
 
             //JSONObject entities = object.optJSONObject("entities");
