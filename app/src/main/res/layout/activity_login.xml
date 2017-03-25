@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="60dp"
+    android:background="@color/twitterBlue"
+    android:orientation="vertical"
+    tools:context="com.aditya.tweetradar.activities.LoginActivity">
+
+    <ImageView
+        android:id="@+id/imageTwitter"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:src="@drawable/ic_twitter_social_icon_white"
+       />
+
+    <TextView
+        android:id="@+id/tvWelcome"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+        android:textStyle="bold"
+        android:layout_marginTop="60dp"
+        android:textColor="@android:color/white"
+        android:text="@string/welcome" />
+
+    <TextView
+        android:id="@+id/tvSubheadline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/TextAppearance.AppCompat.Headline"
+        android:textStyle="bold"
+        android:layout_marginTop="32dp"
+        android:textColor="@android:color/white"
+        android:text="@string/welcome_subhead" />
+
+    <Button
+        android:id="@+id/btnLogin"
+        android:layout_gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/transparent_button_with_border"
+        android:textColor="@android:color/white"
+        android:layout_marginTop="56dp"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:textStyle="bold"
+        android:text="@string/login_with_twitter"/>
+
+</LinearLayout>
