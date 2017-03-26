@@ -80,18 +80,22 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
     }
 
     public void addTweet(Tweet tweet) {
+        tweet.save();
         tweets.add(tweet);
     }
 
     public void addTweet(int position, Tweet tweet) {
+        tweet.save();
         tweets.add(position, tweet);
     }
 
     public void addTweets(List<Tweet> tweets) {
+        saveTweets(tweets);
         this.tweets.addAll(tweets);
     }
 
     public void setTweet(int position, Tweet tweet) {
+        tweet.save();
         this.tweets.set(position, tweet);
     }
 
@@ -133,6 +137,12 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
         }
 
         return "";
+    }
+
+    private void saveTweets(List<Tweet> tweets) {
+        for (Tweet tweet : tweets) {
+            tweet.save();
+        }
     }
 
 

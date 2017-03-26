@@ -45,7 +45,7 @@ public class Tweet extends BaseModel {
     public String text;
 
     @Column
-    @ForeignKey
+    @ForeignKey(saveForeignKeyModel = true)
     public User user;
 
     public static Tweet fromJSON(JSONObject object) {

@@ -40,11 +40,11 @@
     <Button
         android:id="@+id/btnLogin"
         android:layout_gravity="center"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/transparent_button_with_border"
         android:textColor="@android:color/white"
-        android:layout_marginTop="56dp"
+        android:layout_marginTop="64dp"
         android:paddingStart="20dp"
         android:paddingEnd="20dp"
         android:textStyle="bold"
