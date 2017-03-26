@@ -74,6 +74,9 @@ public class TweetTimelineActivity extends AppCompatActivity implements TweetCom
         endlessRecyclerViewScrollListener = new EndlessRecyclerViewScrollListener((LinearLayoutManager) layoutManager) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                if (totalItemsCount <= 5) {
+                    return;
+                }
                 fetchTweets(tweetAdapter.getLastLoadedTweet().id);
             }
         };

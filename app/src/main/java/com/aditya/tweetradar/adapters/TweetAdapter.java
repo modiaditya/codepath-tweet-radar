@@ -32,6 +32,9 @@ import java.util.TimeZone;
  */
 
 public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> {
+    private static int LOADING_ITEM_TYPE = 0;
+    private static int TWEET_ITEM_TYPE = 1;
+
     ArrayList<Tweet> tweets;
     Context context;
 
@@ -42,41 +45,63 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(context).inflate(R.layout.tweet_item, parent, false);
-        return new ViewHolder(v);
+        if (viewType == TWEET_ITEM_TYPE) {
+            View v = LayoutInflater.from(context).inflate(R.layout.tweet_item, parent, false);
+            return new TweetViewHolder(v);
+        } else {
+            View v = LayoutInflater.from(context).inflate(R.layout.loading_item, parent, false);
+            return new LoadingViewHolder(v);
+        }
+
     }
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
+        int itemType = getItemViewType(position);
+        if (itemType == LOADING_ITEM_TYPE) {
+            return;
+        }
+
+        TweetViewHolder tweetViewHolder = (TweetViewHolder) holder;
+
         Tweet tweet = tweets.get(position);
-        holder.name.setText(tweet.user.name);
-        holder.screenName.setText(tweet.user.screenName);
-        holder.text.setText(tweet.text);
-        holder.retweetCount.setText(String.valueOf(tweet.retweetCount));
-        holder.favoriteCount.setText(String.valueOf(tweet.favoriteCount));
-        Glide.with(context).load(tweet.user.profileImageUrl).into(holder.profileImage);
-        holder.createdTime.setText(getRelativeTime(tweet.createdAt));
+        tweetViewHolder.name.setText(tweet.user.name);
+        tweetViewHolder.screenName.setText(tweet.user.screenName);
+        tweetViewHolder.text.setText(tweet.text);
+        tweetViewHolder.retweetCount.setText(String.valueOf(tweet.retweetCount));
+        tweetViewHolder.favoriteCount.setText(String.valueOf(tweet.favoriteCount));
+        Glide.with(context).load(tweet.user.profileImageUrl).into(tweetViewHolder.profileImage);
+        tweetViewHolder.createdTime.setText(getRelativeTime(tweet.createdAt));
         if (tweet.isRetweeted) {
-            holder.retweetImage.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_retweet_activated));
-            holder.retweetCount.setTextColor(ContextCompat.getColor(context, R.color.retweet));
+            tweetViewHolder.retweetImage.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_retweet_activated));
+            tweetViewHolder.retweetCount.setTextColor(ContextCompat.getColor(context, R.color.retweet));
         } else {
-            holder.retweetImage.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_retweet));
-            holder.retweetCount.setTextColor(ContextCompat.getColor(context, R.color.deactivate));
+            tweetViewHolder.retweetImage.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_retweet));
+            tweetViewHolder.retweetCount.setTextColor(ContextCompat.getColor(context, R.color.deactivate));
         }
 
         if (tweet.isFavorited) {
-            holder.favoriteImage.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_favorite_activated));
-            holder.favoriteCount.setTextColor(ContextCompat.getColor(context, R.color.favorite));
+            tweetViewHolder.favoriteImage.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_favorite_activated));
+            tweetViewHolder.favoriteCount.setTextColor(ContextCompat.getColor(context, R.color.favorite));
         } else {
-            holder.favoriteImage.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_favorite));
-            holder.favoriteCount.setTextColor(ContextCompat.getColor(context, R.color.deactivate));
+            tweetViewHolder.favoriteImage.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_favorite));
+            tweetViewHolder.favoriteCount.setTextColor(ContextCompat.getColor(context, R.color.deactivate));
         }
 
     }
 
     @Override
+    public int getItemViewType(int position) {
+        if (position >= tweets.size()) {
+            return LOADING_ITEM_TYPE;
+        } else {
+            return TWEET_ITEM_TYPE;
+        }
+    }
+
+    @Override
     public int getItemCount() {
-        return tweets.size();
+        return (tweets.size() + 1);
     }
 
     public void addTweet(Tweet tweet) {
@@ -146,7 +171,13 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
     }
 
 
-    class ViewHolder extends RecyclerView.ViewHolder {
+    abstract class ViewHolder extends RecyclerView.ViewHolder {
+        public ViewHolder(View itemView) {
+            super(itemView);
+        }
+    }
+
+    class TweetViewHolder extends ViewHolder {
         @BindView(R.id.tvName) TextView name;
         @BindView(R.id.tvScreenName) TextView screenName;
         @BindView(R.id.imageProfile) ImageView profileImage;
@@ -158,7 +189,7 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
         @BindView(R.id.imageFavorite) ImageView favoriteImage;
         @BindView(R.id.imageRetweet) ImageView retweetImage;
 
-        public ViewHolder(View itemView) {
+        public TweetViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
             setupFavorite();
@@ -216,5 +247,12 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
         }
 
 
+    }
+
+    class LoadingViewHolder extends ViewHolder {
+
+        public LoadingViewHolder(View itemView) {
+            super(itemView);
+        }
     }
 }
