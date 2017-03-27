@@ -26,7 +26,7 @@ The following **optional** features are implemented:
 * [x] User can **pull down to refresh tweets timeline**
 * [x] User can **open the twitter app offline and see last loaded tweets**. Persisted in SQLite tweets are refreshed on every application launch. While "live data" is displayed when app can get it from Twitter API, it is also saved for use in offline mode.
 * [ ] User can tap a tweet to **open a detailed tweet view**
-* [x] User can **select "reply" from ~~detail view~~ model to respond to a tweet**
+* [x] User can **select "reply" from ~~detail view~~ modal to respond to a tweet**
 
 The following **bonus** features are implemented:
 
@@ -53,6 +53,7 @@ The following **additional** features are implemented:
 * [x] Ability to retweet and refresh UI to reflect the retweet without a full network refresh
 * [x] Ability to favorite and refresh UI to reflect the retweet without a full network refresh
 * [x] Splash screen that decides whether to take user to Login to Timeline
+* [x] Tried out `org.parceler` as a Parcelable replacement
 * [x] Logout
 
 
@@ -60,13 +61,18 @@ The following **additional** features are implemented:
 
 Here's a walkthrough of implemented user stories:
 
-<img src='http://i.imgur.com/link/to/your/gif/file.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
+<img src='./codepath-tweet-radar.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
 
 GIF created with [LiceCap](http://www.cockos.com/licecap/).
 
 ## Notes
 
-Describe any challenges encountered while building the app.
+### Challenges
+
+* Working `android-oauth-handler` can be challening since its sort of a black box. There were a few things I could not, like if the Main Activity was anything but Login Activity, and then if I called Login Activity, it would throw exceptions when trying to authorize the user
+* Coordinator layout scroll behavior is very tricky to understand. I still dont get it
+* Working with twitter API rate limit can be challenging since there was so much I wanted to do if the limit was not there
+
 
 ## Open-source libraries used
 
