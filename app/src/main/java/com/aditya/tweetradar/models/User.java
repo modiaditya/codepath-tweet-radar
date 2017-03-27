@@ -30,6 +30,9 @@ public class User extends BaseModel {
     @Column
     public String screenName;
 
+    @Column
+    public boolean isVerified;
+
     public static User fromJSON(JSONObject jsonObject) {
         User user = new User();
         try {
@@ -37,6 +40,7 @@ public class User extends BaseModel {
             user.name = jsonObject.getString("name");
             user.profileImageUrl = jsonObject.getString("profile_image_url");
             user.screenName = "@" + jsonObject.getString("screen_name");
+            user.isVerified = jsonObject.getBoolean("verified");
 
         } catch (JSONException e) {
             e.printStackTrace();

@@ -30,7 +30,7 @@ The following **optional** features are implemented:
 
 The following **bonus** features are implemented:
 
-* [ ] User can see embedded image media within the tweet detail view
+* [x] User can see embedded image media within the tweet detail view
 * [ ] User can watch embedded video within the tweet
 * [x] Compose tweet functionality is build using modal overlay
 * [x] Use Parcelable instead of Serializable using the popular [Parceler library](http://guides.codepath.com/android/Using-Parceler).
@@ -46,12 +46,14 @@ The following **bonus** features are implemented:
 The following **additional** features are implemented:
 
 * [x] Show progress bar during initial load and infinite scroll
+* [x] Listen for network connectivity updates and show/hide snackbar automatically
 * [x] Disable tweet button when tweet text exceeds 140 characters
 * [x] Set character remaining to red when tweet text exceeds 140 characters
-* [x] Use butterknife
+* [x] Used butterknife
 * [x] Ability to retweet and refresh UI to reflect the retweet without a full network refresh
 * [x] Ability to favorite and refresh UI to reflect the retweet without a full network refresh
 * [x] Splash screen that decides whether to take user to Login to Timeline
+* [ ] Logout
 
 
 ## Video Walkthrough

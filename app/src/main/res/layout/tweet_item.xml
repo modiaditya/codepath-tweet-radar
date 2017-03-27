@@ -25,11 +25,20 @@
             android:textColor="@android:color/black"
             tools:text="Aditya Modi" />
 
+        <ImageView
+            android:id="@+id/imageVerified"
+            android:layout_width="12dp"
+            android:layout_height="12dp"
+            android:layout_toRightOf="@id/tvName"
+            android:layout_marginLeft="4dp"
+            android:layout_marginTop="2dp"
+            android:src="@drawable/ic_verified"/>
+
         <TextView
             android:id="@+id/tvScreenName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/tvName"
+            android:layout_toRightOf="@id/imageVerified"
             android:layout_marginLeft="4dp"
             android:layout_alignTop="@id/tvName"
             tools:text="\@modi_aditya" />

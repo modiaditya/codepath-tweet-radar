@@ -41,6 +41,8 @@ import org.parceler.Parcels;
 public class TweetComposeDialogFragment extends DialogFragment {
     public static final String TAG = TweetComposeDialogFragment.class.getSimpleName();
     public static final String USER_EXTRA = "user_extra";
+    public static final String TWEET_ID_EXTRA = "tweet_id_extra";
+    public static final String REPLY_TO_USER_EXTRA = "reply_to_user_extra";
 
     private static final int MAX_TWEET_CHARS = 140;
 
@@ -53,14 +55,21 @@ public class TweetComposeDialogFragment extends DialogFragment {
     @BindView(R.id.close) ImageView close;
 
     private User user;
+    private Long tweetId;
+    private String userName;
     TweetComposeDialogFragmentListener tweetComposeDialogFragmentListener;
 
     public interface TweetComposeDialogFragmentListener {
         void onTweet(Tweet tweet);
     }
-    public static TweetComposeDialogFragment newInstance(User user) {
+    public static TweetComposeDialogFragment newInstance(User user, Long tweetId, String userName) {
         Bundle bundle = new Bundle();
         bundle.putParcelable(USER_EXTRA, Parcels.wrap(user));
+        if (userName != null && tweetId != null) {
+            bundle.putString(REPLY_TO_USER_EXTRA, userName);
+            bundle.putLong(TWEET_ID_EXTRA, tweetId);
+        }
+
         TweetComposeDialogFragment tweetComposeDialogFragment = new TweetComposeDialogFragment();
         tweetComposeDialogFragment.setArguments(bundle);
         return tweetComposeDialogFragment;
@@ -71,6 +80,8 @@ public class TweetComposeDialogFragment extends DialogFragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             user = Parcels.unwrap(getArguments().getParcelable(USER_EXTRA));
+            userName = getArguments().getString(REPLY_TO_USER_EXTRA, null);
+            tweetId = getArguments().getLong(TWEET_ID_EXTRA, -1);
         }
         tweetComposeDialogFragmentListener = (TweetComposeDialogFragmentListener) getActivity();
 
@@ -109,6 +120,11 @@ public class TweetComposeDialogFragment extends DialogFragment {
         name.setText(user.name);
         screenName.setText(user.screenName);
         Glide.with(getContext()).load(user.profileImageUrl).into(profileImage);
+        if (userName != null) {
+            tweetBody.setText(userName);
+            setCharsRemaining(userName.length());
+        }
+
         setTweetBodyListener();
         setOnTweetButtonClickListener();
         tweet.setEnabled(false);
@@ -119,6 +135,7 @@ public class TweetComposeDialogFragment extends DialogFragment {
                 dismiss();
             }
         });
+
         return v;
     }
 
@@ -126,7 +143,7 @@ public class TweetComposeDialogFragment extends DialogFragment {
         tweet.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                TweetRadarApplication.getTwitterClient().postTweet(tweetBody.getText().toString(), new JsonHttpResponseHandler() {
+                TweetRadarApplication.getTwitterClient().postTweet(tweetBody.getText().toString(), tweetId, new JsonHttpResponseHandler() {
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
 

@@ -1,6 +1,7 @@
 package com.aditya.tweetradar.adapters;
 
 import android.content.Context;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -13,8 +14,11 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import com.aditya.tweetradar.R;
 import com.aditya.tweetradar.TweetRadarApplication;
+import com.aditya.tweetradar.fragments.TweetComposeDialogFragment;
 import com.aditya.tweetradar.models.Tweet;
+import com.aditya.tweetradar.models.User;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import cz.msebera.android.httpclient.Header;
 import org.json.JSONObject;
@@ -37,10 +41,15 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
 
     ArrayList<Tweet> tweets;
     Context context;
+    User loggedInUser;
 
     public TweetAdapter(Context context) {
         this.context = context;
         tweets = new ArrayList<>();
+    }
+
+    public void setLoggedInUser(User user) {
+        this.loggedInUser = user;
     }
 
     @Override
@@ -70,7 +79,7 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
         tweetViewHolder.text.setText(tweet.text);
         tweetViewHolder.retweetCount.setText(String.valueOf(tweet.retweetCount));
         tweetViewHolder.favoriteCount.setText(String.valueOf(tweet.favoriteCount));
-        Glide.with(context).load(tweet.user.profileImageUrl).into(tweetViewHolder.profileImage);
+        Glide.with(context).load(tweet.user.profileImageUrl).diskCacheStrategy(DiskCacheStrategy.ALL).into(tweetViewHolder.profileImage);
         tweetViewHolder.createdTime.setText(getRelativeTime(tweet.createdAt));
         if (tweet.isRetweeted) {
             tweetViewHolder.retweetImage.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_retweet_activated));
@@ -91,10 +100,17 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
         if(tweet.media != null) {
             Glide.with(context)
                  .load(tweet.media.mediaUrlHttps)
+                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                  .into(((TweetViewHolder) holder).tweetImage);
             tweetViewHolder.tweetImage.setVisibility(View.VISIBLE);
         } else {
             tweetViewHolder.tweetImage.setVisibility(View.GONE);
+        }
+
+        if (tweet.user.isVerified) {
+            tweetViewHolder.verifiedImage.setVisibility(View.VISIBLE);
+        } else {
+            tweetViewHolder.verifiedImage.setVisibility(View.GONE);
         }
 
     }
@@ -194,15 +210,18 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
         @BindView(R.id.tvText) TextView text;
         @BindView(R.id.tvRetweetCount) TextView retweetCount;
         @BindView(R.id.tvFavoriteCount) TextView favoriteCount;
+        @BindView(R.id.imageReply) ImageView replyImage;
         @BindView(R.id.imageFavorite) ImageView favoriteImage;
         @BindView(R.id.imageRetweet) ImageView retweetImage;
         @BindView(R.id.imageTweet) ImageView tweetImage;
+        @BindView(R.id.imageVerified) ImageView verifiedImage;
 
         public TweetViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
             setupFavorite();
             setupRetweet();
+            setupReplyTweet();
         }
 
         private void setupFavorite() {
@@ -251,6 +270,19 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
                             Toast.makeText(context, "Failed to retweet post", Toast.LENGTH_SHORT).show();
                         }
                     });
+                }
+            });
+        }
+
+        private void setupReplyTweet() {
+            replyImage.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    final int position = getAdapterPosition();
+                    final Tweet tweet = tweets.get(position);
+
+                    TweetComposeDialogFragment.newInstance(loggedInUser, tweet.id, tweet.user.screenName)
+                                              .show(((FragmentActivity)context).getSupportFragmentManager(), "reply_tweet");
                 }
             });
         }

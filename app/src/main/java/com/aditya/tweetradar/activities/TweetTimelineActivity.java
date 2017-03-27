@@ -115,7 +115,8 @@ public class TweetTimelineActivity extends AppCompatActivity
         composeTweet.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                TweetComposeDialogFragment.newInstance(loggedInUser).show(getSupportFragmentManager(), "compose");
+                TweetComposeDialogFragment.newInstance(loggedInUser, null, null)
+                                          .show(getSupportFragmentManager(), "compose");
             }
         });
     }
@@ -151,6 +152,7 @@ public class TweetTimelineActivity extends AppCompatActivity
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 loggedInUser = User.fromJSON(response);
+                tweetAdapter.setLoggedInUser(loggedInUser);
             }
 
             @Override
@@ -158,6 +160,12 @@ public class TweetTimelineActivity extends AppCompatActivity
                 Log.e(TAG, "Failed to get user information" + throwable);
             }
         });
+    }
+
+    @Override
+    protected void onDestroy() {
+        this.unregisterReceiver(networkStateReceiver);
+        super.onDestroy();
     }
 
     private void fetchTweets() {
