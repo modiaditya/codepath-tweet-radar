@@ -1,5 +1,6 @@
 package com.aditya.tweetradar.activities;
 
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
@@ -24,6 +25,7 @@ import com.aditya.tweetradar.listeners.EndlessRecyclerViewScrollListener;
 import com.aditya.tweetradar.models.Tweet;
 import com.aditya.tweetradar.models.Tweet_Table;
 import com.aditya.tweetradar.models.User;
+import com.aditya.tweetradar.receivers.NetworkStateReceiver;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 import cz.msebera.android.httpclient.Header;
@@ -36,7 +38,9 @@ import java.util.List;
  * Created by amodi on 3/23/17.
  */
 
-public class TweetTimelineActivity extends AppCompatActivity implements TweetComposeDialogFragment.TweetComposeDialogFragmentListener {
+public class TweetTimelineActivity extends AppCompatActivity
+    implements TweetComposeDialogFragment.TweetComposeDialogFragmentListener,
+    NetworkStateReceiver.NetworkStateReceiverListener {
     private static String TAG = TweetTimelineActivity.class.getSimpleName();
 
     @BindView(R.id.rv_timeline) RecyclerView recyclerView;
@@ -50,6 +54,7 @@ public class TweetTimelineActivity extends AppCompatActivity implements TweetCom
     EndlessRecyclerViewScrollListener endlessRecyclerViewScrollListener;
     User loggedInUser;
     Snackbar noInternetSnackbar;
+    NetworkStateReceiver networkStateReceiver;
 
     @Override
     public void onTweet(Tweet tweet) {
@@ -58,10 +63,25 @@ public class TweetTimelineActivity extends AppCompatActivity implements TweetCom
     }
 
     @Override
+    public void networkAvailable() {
+        if (noInternetSnackbar != null) {
+            noInternetSnackbar.dismiss();
+        }
+    }
+
+    @Override
+    public void networkUnavailable() {
+        showNoInternetSnackbar();
+    }
+
+    @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tweet_timeline);
         ButterKnife.bind(this);
+        networkStateReceiver = new NetworkStateReceiver();
+        networkStateReceiver.addListener(this);
+        this.registerReceiver(networkStateReceiver, new IntentFilter(android.net.ConnectivityManager.CONNECTIVITY_ACTION));
         //toolbar.setLogo(R.drawable.ic_twitter_social);
         toolbar.setTitle(R.string.app_name);
         this.layoutManager = new LinearLayoutManager(this);
@@ -103,7 +123,7 @@ public class TweetTimelineActivity extends AppCompatActivity implements TweetCom
     private void fetchTweets(Long maxId) {
         if (!TwitterClient.isNetworkAvailable(this)) {
             showNoInternetSnackbar();
-            if (tweetAdapter.getItemCount() == 0) {
+            if (tweetAdapter.getItemCount() <= 2) {
                 loadTweetsFromDatabase();
             }
             return;
@@ -111,6 +131,7 @@ public class TweetTimelineActivity extends AppCompatActivity implements TweetCom
         TweetRadarApplication.getTwitterClient().getHomeTimeline(maxId, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
+                hideNoInternetSnackbar();
                 swipeRefreshLayout.setRefreshing(false);
                 List<Tweet> tweets = Tweet.fromJSONArray(response);
                 tweetAdapter.addTweets(tweets);
@@ -147,6 +168,12 @@ public class TweetTimelineActivity extends AppCompatActivity implements TweetCom
         if (noInternetSnackbar == null) {
             noInternetSnackbar = Snackbar.make(coordinatorLayout, getString(R.string.no_internet), Snackbar.LENGTH_INDEFINITE);
             noInternetSnackbar.show();
+        }
+    }
+
+    private void hideNoInternetSnackbar() {
+        if (noInternetSnackbar != null) {
+            noInternetSnackbar.dismiss();
         }
     }
 

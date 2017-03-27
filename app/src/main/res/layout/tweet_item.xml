@@ -60,8 +60,19 @@
             android:textColor="@android:color/black"
             tools:text="Toronto schools will no longer allow student or staff trips to the US, citing uncertainty over the travel ban http://cnn.it/2myrwJ2 "/>
 
+        <ImageView
+            android:id="@+id/imageTweet"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_below="@+id/tvText"
+            android:layout_marginTop="4dp"
+            android:scaleType="fitXY"
+            android:adjustViewBounds="true"
+            android:background="@drawable/transparent_round"
+            />
+
         <RelativeLayout
-            android:layout_below="@id/tvText"
+            android:layout_below="@id/imageTweet"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp">

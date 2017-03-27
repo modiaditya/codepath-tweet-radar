@@ -10,5 +10,5 @@ import com.raizlabs.android.dbflow.annotation.Database;
 public class TweetRadarDatabase {
 
     public static final String NAME = "TweetRadarDatabase";
-    public static final int VERSION = 1;
+    public static final int VERSION = 2;
 }

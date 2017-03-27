@@ -88,6 +88,15 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
             tweetViewHolder.favoriteCount.setTextColor(ContextCompat.getColor(context, R.color.deactivate));
         }
 
+        if(tweet.media != null) {
+            Glide.with(context)
+                 .load(tweet.media.mediaUrlHttps)
+                 .into(((TweetViewHolder) holder).tweetImage);
+            tweetViewHolder.tweetImage.setVisibility(View.VISIBLE);
+        } else {
+            tweetViewHolder.tweetImage.setVisibility(View.GONE);
+        }
+
     }
 
     @Override
@@ -183,11 +192,11 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
         @BindView(R.id.imageProfile) ImageView profileImage;
         @BindView(R.id.tvCreatedTime) TextView createdTime;
         @BindView(R.id.tvText) TextView text;
-        //@BindView(R.id.tvReplyCount) TextView replyCount;
         @BindView(R.id.tvRetweetCount) TextView retweetCount;
         @BindView(R.id.tvFavoriteCount) TextView favoriteCount;
         @BindView(R.id.imageFavorite) ImageView favoriteImage;
         @BindView(R.id.imageRetweet) ImageView retweetImage;
+        @BindView(R.id.imageTweet) ImageView tweetImage;
 
         public TweetViewHolder(View itemView) {
             super(itemView);

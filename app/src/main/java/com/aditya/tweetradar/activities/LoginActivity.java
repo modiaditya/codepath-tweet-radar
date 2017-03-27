@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 import com.aditya.tweetradar.R;
 import com.aditya.tweetradar.client.TwitterClient;
 import com.codepath.oauth.OAuthLoginActivity;
@@ -17,26 +18,14 @@ public class LoginActivity extends OAuthLoginActivity<TwitterClient> {
 
     @Override
     public void onLoginSuccess() {
-        Log.e(TAG, "Yayyy!");
-        Intent i = new Intent(this, TweetTimelineActivity.class);
+        Intent i = new Intent(this, SplashActivity.class);
         startActivity(i);
-//        getClient().getHomeTimeline(1, new AsyncHttpResponseHandler() {
-//            @Override
-//            public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-//                Log.e(TAG, "Yaasdadadadyyy!");
-//            }
-//
-//            @Override
-//            public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-//                Log.e(TAG, "Nay!");
-//            }
-//
-//        });
     }
 
     @Override
     public void onLoginFailure(Exception e) {
-        Log.e(TAG, "Oh noo", e);
+        Log.e(TAG, "Failed to login", e);
+        Toast.makeText(this, "Failed to login", Toast.LENGTH_LONG).show();
     }
 
     // Method to be called to begin the authentication process

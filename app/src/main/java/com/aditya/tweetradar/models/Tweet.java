@@ -46,6 +46,10 @@ public class Tweet extends BaseModel {
 
     @Column
     @ForeignKey(saveForeignKeyModel = true)
+    public Media media;
+
+    @Column
+    @ForeignKey(saveForeignKeyModel = true)
     public User user;
 
     public static Tweet fromJSON(JSONObject object) {
@@ -63,6 +67,12 @@ public class Tweet extends BaseModel {
             tweet.favoriteCount = object.getInt("favorite_count");
             tweet.isFavorited = object.getBoolean("favorited");
             tweet.user = User.fromJSON(object.getJSONObject("user"));
+
+            JSONObject mediaObj = object.getJSONObject("entities");
+            if(mediaObj.has("media")) {
+                JSONArray mediaArray = mediaObj.getJSONArray("media");
+                tweet.media = Media.fromJson(mediaArray.getJSONObject(0));
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }
