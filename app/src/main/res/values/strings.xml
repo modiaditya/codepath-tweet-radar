@@ -8,4 +8,7 @@
     <string name="c140">140</string>
     <string name="whats_happening">What\'s Happening?</string>
     <string name="no_internet">No Internet Connection</string>
+    <string name="save_draft">Do you want to save draft?</string>
+    <string name="save">Save</string>
+    <string name="delete">Delete</string>
 </resources>

@@ -1,4 +1,4 @@
-package com.aditya.tweetradar.database;
+package com.aditya.tweetradar.persistence;
 
 import com.raizlabs.android.dbflow.annotation.Database;
 

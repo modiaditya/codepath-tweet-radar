@@ -35,7 +35,13 @@
                     />
             </intent-filter>
         </activity>
-        <activity android:name=".activities.TweetTimelineActivity"/>
+        <activity android:name=".activities.TweetTimelineActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.SEND"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <data android:mimeType="text/plain"></data>
+            </intent-filter>
+        </activity>
         <receiver
             android:name=".receivers.NetworkStateReceiver"
             android:label="NetworkChangeReceiver" >

@@ -1,7 +1,7 @@
 package com.aditya.tweetradar.models;
 
 import android.util.Log;
-import com.aditya.tweetradar.database.TweetRadarDatabase;
+import com.aditya.tweetradar.persistence.TweetRadarDatabase;
 import com.raizlabs.android.dbflow.annotation.Column;
 import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;

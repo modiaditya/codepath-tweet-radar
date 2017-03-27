@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentManager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -28,8 +29,11 @@ import com.aditya.tweetradar.R;
 import com.aditya.tweetradar.TweetRadarApplication;
 import com.aditya.tweetradar.models.Tweet;
 import com.aditya.tweetradar.models.User;
+import com.aditya.tweetradar.models.User_Table;
+import com.aditya.tweetradar.persistence.TweetRadarSharedPreferences;
 import com.bumptech.glide.Glide;
 import com.loopj.android.http.JsonHttpResponseHandler;
+import com.raizlabs.android.dbflow.sql.language.SQLite;
 import cz.msebera.android.httpclient.Header;
 import org.json.JSONObject;
 import org.parceler.Parcels;
@@ -38,11 +42,11 @@ import org.parceler.Parcels;
  * Created by amodi on 3/25/17.
  */
 
-public class TweetComposeDialogFragment extends DialogFragment {
+public class TweetComposeDialogFragment extends DialogFragment implements DraftDialogFragment.DraftDialogFragmentListener {
     public static final String TAG = TweetComposeDialogFragment.class.getSimpleName();
     public static final String USER_EXTRA = "user_extra";
     public static final String TWEET_ID_EXTRA = "tweet_id_extra";
-    public static final String REPLY_TO_USER_EXTRA = "reply_to_user_extra";
+    public static final String TWEET_BODY_EXTRA = "tweet_body_extra";
 
     private static final int MAX_TWEET_CHARS = 140;
 
@@ -56,17 +60,32 @@ public class TweetComposeDialogFragment extends DialogFragment {
 
     private User user;
     private Long tweetId;
-    private String userName;
+    private String prefilledTweetBody;
     TweetComposeDialogFragmentListener tweetComposeDialogFragmentListener;
+
+    @Override
+    public void onSave() {
+        TweetRadarSharedPreferences.saveUserDraft(getActivity(), tweetBody.getText().toString());
+        dismiss();
+    }
+
+    @Override
+    public void onDismiss() {
+        TweetRadarSharedPreferences.clearUserDraft(getContext());
+        dismiss();
+    }
 
     public interface TweetComposeDialogFragmentListener {
         void onTweet(Tweet tweet);
     }
-    public static TweetComposeDialogFragment newInstance(User user, Long tweetId, String userName) {
+
+    public static TweetComposeDialogFragment newInstance(User user, Long tweetId, String prefilledTweetBody) {
         Bundle bundle = new Bundle();
         bundle.putParcelable(USER_EXTRA, Parcels.wrap(user));
-        if (userName != null && tweetId != null) {
-            bundle.putString(REPLY_TO_USER_EXTRA, userName);
+        if (prefilledTweetBody != null) {
+            bundle.putString(TWEET_BODY_EXTRA, prefilledTweetBody);
+        }
+        if (tweetId != null) {
             bundle.putLong(TWEET_ID_EXTRA, tweetId);
         }
 
@@ -75,12 +94,18 @@ public class TweetComposeDialogFragment extends DialogFragment {
         return tweetComposeDialogFragment;
     }
 
+    public static TweetComposeDialogFragment newInstance(Long userId, Long tweetId, String prefilledTweetBody) {
+        User user = SQLite.select().from(User.class).where(User_Table.id.eq(userId)).querySingle();
+        return newInstance(user, tweetId, prefilledTweetBody);
+    }
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        prefilledTweetBody = TweetRadarSharedPreferences.getUserDraft(getContext());
         if (getArguments() != null) {
             user = Parcels.unwrap(getArguments().getParcelable(USER_EXTRA));
-            userName = getArguments().getString(REPLY_TO_USER_EXTRA, null);
+            prefilledTweetBody = getArguments().getString(TWEET_BODY_EXTRA, prefilledTweetBody);
             tweetId = getArguments().getLong(TWEET_ID_EXTRA, -1);
         }
         tweetComposeDialogFragmentListener = (TweetComposeDialogFragmentListener) getActivity();
@@ -119,20 +144,24 @@ public class TweetComposeDialogFragment extends DialogFragment {
 
         name.setText(user.name);
         screenName.setText(user.screenName);
+        tweet.setEnabled(false);
+        tweet.setAlpha(0.5f);
         Glide.with(getContext()).load(user.profileImageUrl).into(profileImage);
-        if (userName != null) {
-            tweetBody.setText(userName);
-            setCharsRemaining(userName.length());
+        if (prefilledTweetBody != null) {
+            tweetBody.setText(prefilledTweetBody);
+            setCharsRemaining(prefilledTweetBody.length());
         }
 
         setTweetBodyListener();
         setOnTweetButtonClickListener();
-        tweet.setEnabled(false);
-        tweet.setAlpha(0.5f);
+
         close.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                dismiss();
+                FragmentManager fragmentManager = getFragmentManager();
+                DraftDialogFragment draftDialogFragment = new DraftDialogFragment();
+                draftDialogFragment.setTargetFragment(TweetComposeDialogFragment.this, 0);
+                draftDialogFragment.show(fragmentManager, "draft_dialog");
             }
         });
 
@@ -149,6 +178,7 @@ public class TweetComposeDialogFragment extends DialogFragment {
 
                         Tweet tweetResponse = Tweet.fromJSON(response);
                         tweetComposeDialogFragmentListener.onTweet(tweetResponse);
+                        TweetRadarSharedPreferences.clearUserDraft(getContext());
                         dismiss();
                     }
 
@@ -178,12 +208,13 @@ public class TweetComposeDialogFragment extends DialogFragment {
             @Override
             public void afterTextChanged(Editable editable) {
                 // use onTextChanged instead
-                setCharsRemaining(MAX_TWEET_CHARS - editable.toString().length());
+                setCharsRemaining(editable.toString().length());
             }
         });
     }
 
-    private void setCharsRemaining(int count) {
+    private void setCharsRemaining(int textCount) {
+        int count  = MAX_TWEET_CHARS - textCount;
         characterCount.setText(String.valueOf(count));
         if (count >= 0) {
             characterCount.setTextColor(Color.BLACK);

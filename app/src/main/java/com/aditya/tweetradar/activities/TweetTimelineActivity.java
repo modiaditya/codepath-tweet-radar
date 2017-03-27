@@ -1,5 +1,6 @@
 package com.aditya.tweetradar.activities;
 
+import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -25,6 +26,7 @@ import com.aditya.tweetradar.listeners.EndlessRecyclerViewScrollListener;
 import com.aditya.tweetradar.models.Tweet;
 import com.aditya.tweetradar.models.Tweet_Table;
 import com.aditya.tweetradar.models.User;
+import com.aditya.tweetradar.persistence.TweetRadarSharedPreferences;
 import com.aditya.tweetradar.receivers.NetworkStateReceiver;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
@@ -119,6 +121,26 @@ public class TweetTimelineActivity extends AppCompatActivity
                                           .show(getSupportFragmentManager(), "compose");
             }
         });
+
+        // handling implicit intent
+        Intent intent = getIntent();
+        String action = intent.getAction();
+        String type = intent.getType();
+
+        if (Intent.ACTION_SEND.equals(action) && type != null) {
+            if ("text/plain".equals(type)) {
+
+                // Make sure to check whether returned data will be null.
+                String titleOfPage = intent.getStringExtra(Intent.EXTRA_SUBJECT);
+                String urlOfPage = intent.getStringExtra(Intent.EXTRA_TEXT);
+                String prefilledTweetBody = urlOfPage + "\n" + titleOfPage;
+                TweetComposeDialogFragment.newInstance(TweetRadarSharedPreferences.getLoggedInUserId(this),
+                                                       null,
+                                                       prefilledTweetBody)
+                                          .show(getSupportFragmentManager(), "compose");
+            }
+        }
+
     }
 
     private void fetchTweets(Long maxId) {
@@ -153,6 +175,8 @@ public class TweetTimelineActivity extends AppCompatActivity
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 loggedInUser = User.fromJSON(response);
                 tweetAdapter.setLoggedInUser(loggedInUser);
+                TweetRadarSharedPreferences.saveLoggedInUserId(TweetTimelineActivity.this, loggedInUser.id);
+                loggedInUser.save();
             }
 
             @Override
