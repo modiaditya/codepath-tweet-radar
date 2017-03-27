@@ -14,6 +14,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -81,6 +83,7 @@ public class TweetTimelineActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tweet_timeline);
         ButterKnife.bind(this);
+        setSupportActionBar(toolbar);
         networkStateReceiver = new NetworkStateReceiver();
         networkStateReceiver.addListener(this);
         this.registerReceiver(networkStateReceiver, new IntentFilter(android.net.ConnectivityManager.CONNECTIVITY_ACTION));
@@ -141,6 +144,28 @@ public class TweetTimelineActivity extends AppCompatActivity
             }
         }
 
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.tweet_timeline_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.miLogout) {
+            TweetRadarApplication.getTwitterClient().clearAccessToken();
+            Intent intent = new Intent(TweetTimelineActivity.this, LoginActivity.class);
+            startActivity(intent);
+            finish();
+            return true;
+        }
+
+        return false;
     }
 
     private void fetchTweets(Long maxId) {

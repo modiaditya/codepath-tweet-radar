@@ -11,4 +11,5 @@
     <string name="save_draft">Do you want to save draft?</string>
     <string name="save">Save</string>
     <string name="delete">Delete</string>
+    <string name="logout">Logout</string>
 </resources>

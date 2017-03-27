@@ -2,7 +2,7 @@
 
 **Tweet Radar** is an android app that allows a user to view his Twitter timeline and post a new tweet. The app utilizes [Twitter REST API](https://dev.twitter.com/rest/public).
 
-Time spent: **X** hours spent in total
+Time spent: **21** hours spent in total
 
 ## User Stories
 
@@ -40,7 +40,7 @@ The following **bonus** features are implemented:
 * [x] Replace all icon drawables and other static image assets with [vector drawables](http://guides.codepath.com/android/Drawables#vector-drawables) where appropriate.
 * [ ] Leverages the [data binding support module](http://guides.codepath.com/android/Applying-Data-Binding-for-Views) to bind data into layout templates.
 * [x] Replace Picasso with [Glide](http://inthecheesefactory.com/blog/get-to-know-glide-recommended-by-google/en) for more efficient image rendering.
-* [ ] Enable your app to [receive implicit intents](http://guides.codepath.com/android/Using-Intents-to-Create-Flows#receiving-implicit-intents) from other apps.  When a link is shared from a web browser, it should pre-fill the text and title of the web page when composing a tweet.
+* [x] Enable your app to [receive implicit intents](http://guides.codepath.com/android/Using-Intents-to-Create-Flows#receiving-implicit-intents) from other apps.  When a link is shared from a web browser, it should pre-fill the text and title of the web page when composing a tweet.
 * [x] When a user leaves the compose view without publishing and there is existing text, prompt to save or delete the draft.  The draft can be resumed from the compose view.
 
 The following **additional** features are implemented:
@@ -53,7 +53,7 @@ The following **additional** features are implemented:
 * [x] Ability to retweet and refresh UI to reflect the retweet without a full network refresh
 * [x] Ability to favorite and refresh UI to reflect the retweet without a full network refresh
 * [x] Splash screen that decides whether to take user to Login to Timeline
-* [ ] Logout
+* [x] Logout
 
 
 ## Video Walkthrough
@@ -75,7 +75,7 @@ Describe any challenges encountered while building the app.
 
 ## License
 
-    Copyright [yyyy] [name of copyright owner]
+    Copyright [2017] [Aditya Modi]
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
