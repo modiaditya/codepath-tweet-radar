@@ -3,13 +3,15 @@ package com.aditya.tweetradar.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import com.aditya.tweetradar.R;
-import com.aditya.tweetradar.fragments.UserListFragment;
+import com.aditya.tweetradar.fragments.UserFollowerListFragment;
+import com.aditya.tweetradar.fragments.UserFollowingListFragment;
 import com.aditya.tweetradar.models.User;
 import org.parceler.Parcels;
 
@@ -37,9 +39,14 @@ public class UserListActivity extends AppCompatActivity {
         user = Parcels.unwrap(intent.getParcelableExtra(USER_EXTRA));
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle(isFollowing ? R.string.following : R.string.followers);
+        getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        Fragment fragment =  isFollowing ? UserFollowingListFragment.newInstance(user) :
+                             UserFollowerListFragment.newInstance(user);
         FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction().replace(R.id.userListContainer, UserListFragment.newInstance(user)).commit();
+        fragmentManager.beginTransaction()
+                       .replace(R.id.userListContainer, fragment).commit();
 
     }
 }

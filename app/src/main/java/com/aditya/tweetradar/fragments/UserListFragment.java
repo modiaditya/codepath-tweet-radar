@@ -12,9 +12,10 @@ import android.view.ViewGroup;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import com.aditya.tweetradar.R;
-import com.aditya.tweetradar.TweetRadarApplication;
 import com.aditya.tweetradar.adapters.PersonAdapter;
+import com.aditya.tweetradar.listeners.EndlessRecyclerViewScrollListener;
 import com.aditya.tweetradar.models.User;
+import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import cz.msebera.android.httpclient.Header;
 import org.json.JSONException;
@@ -30,22 +31,14 @@ import static com.aditya.tweetradar.activities.TweetTimelineActivity.USER_EXTRA;
  * Created by amodi on 4/2/17.
  */
 
-public class UserListFragment extends Fragment {
+public abstract class UserListFragment extends Fragment {
 
     @BindView(R.id.rv_user) RecyclerView recyclerView;
+    EndlessRecyclerViewScrollListener endlessRecyclerViewScrollListener;
     RecyclerView.LayoutManager layoutManager;
     PersonAdapter personAdapter;
     User user;
-
-    public static UserListFragment newInstance(User user) {
-
-        Bundle args = new Bundle();
-
-        UserListFragment fragment = new UserListFragment();
-        args.putParcelable(USER_EXTRA, Parcels.wrap(user));
-        fragment.setArguments(args);
-        return fragment;
-    }
+    Long nextCursor;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -68,15 +61,27 @@ public class UserListFragment extends Fragment {
         recyclerView.addItemDecoration(dividerItemDecoration);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(personAdapter);
-        fetchList();
+        endlessRecyclerViewScrollListener = new EndlessRecyclerViewScrollListener((LinearLayoutManager) layoutManager) {
+            @Override
+            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                if (totalItemsCount <= 5) {
+                    return;
+                }
+                fetchFollowList();
+            }
+        };
+        recyclerView.addOnScrollListener(endlessRecyclerViewScrollListener);
+        fetchFollowList();
         return view;
     }
 
-    private void fetchList() {
-        TweetRadarApplication.getTwitterClient().getFollowersList(user.id, new JsonHttpResponseHandler() {
+    private void fetchFollowList() {
+        fetchFollowList(new JsonHttpResponseHandler() {
+
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 try {
+                    UserListFragment.this.nextCursor = response.getLong("next_cursor");
                     List<User> users = User.fromJSONArray(response.getJSONArray("users"));
                     personAdapter.addUsers(users);
                     personAdapter.notifyDataSetChanged();
@@ -87,4 +92,6 @@ public class UserListFragment extends Fragment {
             }
         });
     }
+
+    abstract void fetchFollowList(AsyncHttpResponseHandler responseHandler);
 }
