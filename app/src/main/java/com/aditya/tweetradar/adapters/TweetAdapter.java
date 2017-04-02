@@ -42,6 +42,11 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
     ArrayList<Tweet> tweets;
     Context context;
     User loggedInUser;
+    OnUserClickListener onUserClickListener;
+
+    public interface OnUserClickListener {
+        void onUserClick(User user);
+    }
 
     public TweetAdapter(Context context) {
         this.context = context;
@@ -73,7 +78,7 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
 
         TweetViewHolder tweetViewHolder = (TweetViewHolder) holder;
 
-        Tweet tweet = tweets.get(position);
+        final Tweet tweet = tweets.get(position);
         tweetViewHolder.name.setText(tweet.user.name);
         tweetViewHolder.screenName.setText(tweet.user.screenName);
         tweetViewHolder.text.setText(tweet.text);
@@ -113,6 +118,17 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
             tweetViewHolder.verifiedImage.setVisibility(View.GONE);
         }
 
+        tweetViewHolder.profileImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onUserClickListener.onUserClick(tweet.user);
+            }
+        });
+
+    }
+
+    public void setOnUserClickListener(OnUserClickListener onUserClickListener) {
+        this.onUserClickListener = onUserClickListener;
     }
 
     @Override
@@ -286,7 +302,6 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
                 }
             });
         }
-
 
     }
 

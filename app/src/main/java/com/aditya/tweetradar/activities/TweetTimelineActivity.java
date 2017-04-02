@@ -17,6 +17,7 @@ import butterknife.ButterKnife;
 import com.aditya.tweetradar.R;
 import com.aditya.tweetradar.TweetRadarApplication;
 import com.aditya.tweetradar.adapters.FragmentViewPagerAdapter;
+import com.aditya.tweetradar.adapters.TweetAdapter;
 import com.aditya.tweetradar.fragments.TweetComposeDialogFragment;
 import com.aditya.tweetradar.models.User;
 import com.aditya.tweetradar.persistence.TweetRadarSharedPreferences;
@@ -27,7 +28,8 @@ import org.parceler.Parcels;
  * Created by amodi on 3/23/17.
  */
 
-public class TweetTimelineActivity extends AppCompatActivity implements NetworkStateReceiver.NetworkStateReceiverListener {
+public class TweetTimelineActivity extends AppCompatActivity
+    implements NetworkStateReceiver.NetworkStateReceiverListener, TweetAdapter.OnUserClickListener {
     private static final String TAG = TweetTimelineActivity.class.getSimpleName();
 
     public static final String USER_EXTRA = "user_extra";
@@ -54,6 +56,12 @@ public class TweetTimelineActivity extends AppCompatActivity implements NetworkS
         showNoInternetSnackbar();
     }
 
+    @Override
+    public void onUserClick(User user) {
+        Intent intent = new Intent(this, ProfileActivity.class);
+        intent.putExtra(USER_EXTRA, Parcels.wrap(user));
+        startActivity(intent);
+    }
 
 
     @Override
@@ -63,10 +71,12 @@ public class TweetTimelineActivity extends AppCompatActivity implements NetworkS
         ButterKnife.bind(this);
         Intent intent = getIntent();
         loggedInUser = Parcels.unwrap(intent.getParcelableExtra(USER_EXTRA));
-        toolbar.setTitle(R.string.app_name);
+        setupToolbarProperties();
+
         fragmentViewPagerAdapter = new FragmentViewPagerAdapter(getSupportFragmentManager(), this, loggedInUser);
         viewPager.setAdapter(fragmentViewPagerAdapter);
         tabLayout.setupWithViewPager(viewPager);
+        networkStateReceiver = new NetworkStateReceiver();
         this.registerReceiver(networkStateReceiver, new IntentFilter(android.net.ConnectivityManager.CONNECTIVITY_ACTION));
 
         // handling implicit intent
@@ -89,8 +99,20 @@ public class TweetTimelineActivity extends AppCompatActivity implements NetworkS
 
     }
 
+    private void setupToolbarProperties() {
+        toolbar.setTitle(R.string.app_name);
+        toolbar.inflateMenu(R.menu.tweet_timeline_menu);
+        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                return onOptionsItemSelected(item);
+            }
+        });
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
         getMenuInflater().inflate(R.menu.tweet_timeline_menu, menu);
         return true;
     }
@@ -104,30 +126,16 @@ public class TweetTimelineActivity extends AppCompatActivity implements NetworkS
             TweetRadarApplication.getTwitterClient().clearAccessToken();
             Intent intent = new Intent(TweetTimelineActivity.this, LoginActivity.class);
             startActivity(intent);
-            finish();
+            return true;
+        }
+        if (id == R.id.miSearch) {
+            Intent intent = new Intent(TweetTimelineActivity.this, SearchActivity.class);
+            startActivity(intent);
             return true;
         }
 
         return false;
     }
-
-//    private void fetchLoggedInUser() {
-//        TweetRadarApplication.getTwitterClient().getUserInformation(new JsonHttpResponseHandler() {
-//            @Override
-//            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-//                loggedInUser = User.fromJSON(response);
-//                TweetRadarSharedPreferences.saveLoggedInUserId(TweetTimelineActivity.this, loggedInUser.id);
-//                loggedInUser.save();
-//            }
-//
-//            @Override
-//            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-//                Log.e(TAG, "Failed to get user information" + throwable);
-//            }
-//        });
-//    }
-
-
 
     @Override
     protected void onDestroy() {

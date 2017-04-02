@@ -9,6 +9,8 @@ import com.loopj.android.http.RequestParams;
 import org.scribe.builder.api.Api;
 import org.scribe.builder.api.TwitterApi;
 
+import java.net.URLEncoder;
+
 /**
  * Created by amodi on 3/22/17.
  */
@@ -42,6 +44,30 @@ public class TwitterClient extends OAuthBaseClient {
         RequestParams params = new RequestParams();
         if (maxId != null) {
             params.put("max_id", (maxId - 1));
+        }
+        client.get(apiUrl, params, handler);
+    }
+
+    public void getUserTimeline(Long maxId, Long userId, AsyncHttpResponseHandler handler) {
+        String apiUrl = getApiUrl("statuses/user_timeline.json");
+        RequestParams params = new RequestParams();
+        if (maxId != null) {
+            params.put("max_id", (maxId - 1));
+        }
+        if (userId != null) {
+            params.put("user_id", userId);
+        }
+        client.get(apiUrl, params, handler);
+    }
+
+    public void search(Long maxId, String q, AsyncHttpResponseHandler handler) {
+        String apiUrl = getApiUrl("search/tweets.json");
+        RequestParams params = new RequestParams();
+        if (maxId != null) {
+            params.put("max_id", (maxId - 1));
+        }
+        if (q != null) {
+            params.put("q", URLEncoder.encode(q));
         }
         client.get(apiUrl, params, handler);
     }

@@ -34,17 +34,19 @@ import java.util.List;
  * Created by amodi on 3/28/17.
  */
 
-public abstract class TweetListFragment extends Fragment implements TweetComposeDialogFragment.TweetComposeDialogFragmentListener {
+public abstract class TweetListFragment extends Fragment
+    implements TweetComposeDialogFragment.TweetComposeDialogFragmentListener{
     private static String TAG = TweetListFragment.class.getSimpleName();
 
     @BindView(R.id.rv_timeline) RecyclerView recyclerView;
     @BindView(R.id.srlTimeline) SwipeRefreshLayout swipeRefreshLayout;
-    @BindView(R.id.fabTweetCompose) FloatingActionButton composeTweet;
+    @BindView(R.id.fabTweetCompose) @Nullable FloatingActionButton composeTweet;
 
     TweetAdapter tweetAdapter;
     RecyclerView.LayoutManager layoutManager;
     EndlessRecyclerViewScrollListener endlessRecyclerViewScrollListener;
-    User loggedInUser;
+    User user;
+    TweetAdapter.OnUserClickListener onUserClickListener;
 
     @Override
     public void onTweet(Tweet tweet) {
@@ -59,13 +61,18 @@ public abstract class TweetListFragment extends Fragment implements TweetCompose
         View view = inflater.inflate(R.layout.fragment_tweet_list, container, false);
         ButterKnife.bind(this, view);
 
-        loggedInUser = Parcels.unwrap(getArguments().getParcelable(TweetTimelineActivity.USER_EXTRA));
+        if (getArguments() != null && getArguments().getParcelable(TweetTimelineActivity.USER_EXTRA) != null) {
+            user = Parcels.unwrap(getArguments().getParcelable(TweetTimelineActivity.USER_EXTRA));
+        }
+
 
 
         //toolbar.setLogo(R.drawable.ic_twitter_social);
 
         this.layoutManager = new LinearLayoutManager(getContext());
         this.tweetAdapter = new TweetAdapter(getContext());
+        this.onUserClickListener = (TweetAdapter.OnUserClickListener) getActivity();
+        this.tweetAdapter.setOnUserClickListener(this.onUserClickListener);
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
                                                                                 getResources().getConfiguration().orientation);
         recyclerView.addItemDecoration(dividerItemDecoration);
@@ -92,9 +99,9 @@ public abstract class TweetListFragment extends Fragment implements TweetCompose
         composeTweet.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                TweetComposeDialogFragment fragment = TweetComposeDialogFragment.newInstance(loggedInUser,
-                                                                                            null,
-                                                                                            null);
+                TweetComposeDialogFragment fragment = TweetComposeDialogFragment.newInstance(user,
+                                                                                             null,
+                                                                                             null);
                 fragment.setTweetComposeDialogFragmentListener(TweetListFragment.this);
                 fragment.show(getActivity().getSupportFragmentManager(), "compose");
             }
@@ -141,8 +148,7 @@ public abstract class TweetListFragment extends Fragment implements TweetCompose
     public abstract void fetchTweets(Long maxId, JsonHttpResponseHandler jsonHttpResponseHandler);
 
 
-
-    private void fetchTweets() {
+    protected void fetchTweets() {
         fetchTweets(null);
     }
 
@@ -152,7 +158,8 @@ public abstract class TweetListFragment extends Fragment implements TweetCompose
         tweetAdapter.notifyDataSetChanged();
     }
 
-//    private void recyclerViewScrollListener() {
+
+    //    private void recyclerViewScrollListener() {
 //        recyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
 //            @Override
 //            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {

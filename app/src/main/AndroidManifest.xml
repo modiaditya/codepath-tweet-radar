@@ -42,6 +42,9 @@
                 <data android:mimeType="text/plain"></data>
             </intent-filter>
         </activity>
+
+        <activity android:name=".activities.ProfileActivity"></activity>
+        <activity android:name=".activities.SearchActivity" />
         <receiver
             android:name=".receivers.NetworkStateReceiver"
             android:label="NetworkChangeReceiver" >
