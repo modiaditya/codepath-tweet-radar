@@ -12,4 +12,8 @@
     <string name="save">Save</string>
     <string name="delete">Delete</string>
     <string name="logout">Logout</string>
+    <string name="mention">Mentions</string>
+    <string name="home">Home</string>
+    <string name="following">Following</string>
+    <string name="followers">Followers</string>
 </resources>
