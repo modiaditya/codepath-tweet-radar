@@ -3,15 +3,17 @@ package com.aditya.tweetradar.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import com.aditya.tweetradar.R;
+import com.aditya.tweetradar.adapters.ProfileViewPagerAdapter;
 import com.aditya.tweetradar.adapters.TweetAdapter;
 import com.aditya.tweetradar.fragments.ProfileHeaderFragment;
-import com.aditya.tweetradar.fragments.UserTweetTimelineFragment;
 import com.aditya.tweetradar.models.User;
 import org.parceler.Parcels;
 
@@ -24,8 +26,11 @@ import static com.aditya.tweetradar.activities.TweetTimelineActivity.USER_EXTRA;
 public class ProfileActivity extends AppCompatActivity implements TweetAdapter.OnUserClickListener {
 
     @BindView(R.id.toolbar) Toolbar toolbar;
+    @BindView(R.id.tabLayout) TabLayout tabLayout;
+    @BindView(R.id.viewPager) ViewPager viewPager;
 
     User user;
+    ProfileViewPagerAdapter profileViewPagerAdapter;
 
     @Override
     public void onUserClick(User user) {
@@ -49,12 +54,16 @@ public class ProfileActivity extends AppCompatActivity implements TweetAdapter.O
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        profileViewPagerAdapter = new ProfileViewPagerAdapter(getSupportFragmentManager(), this, user);
+        viewPager.setAdapter(profileViewPagerAdapter);
+        tabLayout.setupWithViewPager(viewPager);
+
         ProfileHeaderFragment profileHeaderFragment = ProfileHeaderFragment.newInstance(user);
-        UserTweetTimelineFragment userTweetTimelineFragment = UserTweetTimelineFragment.newInstance(user);
+        //UserTweetTimelineFragment userTweetTimelineFragment = UserTweetTimelineFragment.newInstance(user);
         FragmentManager fm = getSupportFragmentManager();
         fm.beginTransaction()
           .replace(R.id.profileHeaderContainer, profileHeaderFragment)
-          .replace(R.id.profileTweetContainer, userTweetTimelineFragment)
+          //.replace(R.id.profileTweetContainer, userTweetTimelineFragment)
           .commit();
 
     }

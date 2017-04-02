@@ -6,36 +6,18 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <!--<android.support.v4.widget.SwipeRefreshLayout-->
-        <!--android:id="@+id/"-->
-        <!--app:layout_behavior="@string/appbar_scrolling_view_behavior"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--&gt;-->
-
-        <!--<android.support.v7.widget.RecyclerView-->
-            <!--android:id="@+id/"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--app:layout_behavior="@string/appbar_scrolling_view_behavior"/>-->
-        <!---->
-
-    <!--</android.support.v4.widget.SwipeRefreshLayout>-->
-
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/srlTimeline"
         android:layout_alignParentTop="true"
         android:layout_alignParentBottom="true"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        >
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/rv_timeline"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior">
-        </android.support.v7.widget.RecyclerView>
+            android:layout_height="wrap_content" />
 
     </android.support.v4.widget.SwipeRefreshLayout>
 

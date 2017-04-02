@@ -17,4 +17,6 @@
     <string name="following">Following</string>
     <string name="followers">Followers</string>
     <string name="search">Search</string>
+    <string name="tweets">Tweets</string>
+    <string name="favroites">Favorites</string>
 </resources>
