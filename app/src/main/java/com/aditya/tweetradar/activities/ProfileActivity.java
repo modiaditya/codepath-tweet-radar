@@ -18,12 +18,14 @@ import com.aditya.tweetradar.models.User;
 import org.parceler.Parcels;
 
 import static com.aditya.tweetradar.activities.TweetTimelineActivity.USER_EXTRA;
+import static com.aditya.tweetradar.activities.UserListActivity.IS_FOLLOWING_EXTRA;
 
 /**
  * Created by amodi on 4/1/17.
  */
 
-public class ProfileActivity extends AppCompatActivity implements TweetAdapter.OnUserClickListener {
+public class ProfileActivity extends AppCompatActivity implements TweetAdapter.OnUserClickListener,
+ProfileHeaderFragment.OnFollowingInfoClickedListener {
 
     @BindView(R.id.toolbar) Toolbar toolbar;
     @BindView(R.id.tabLayout) TabLayout tabLayout;
@@ -35,6 +37,22 @@ public class ProfileActivity extends AppCompatActivity implements TweetAdapter.O
     @Override
     public void onUserClick(User user) {
         Intent intent = new Intent(this, ProfileActivity.class);
+        intent.putExtra(USER_EXTRA, Parcels.wrap(user));
+        startActivity(intent);
+    }
+
+    @Override
+    public void onFollowersClicked(User user) {
+        Intent intent = new Intent(this, UserListActivity.class);
+        intent.putExtra(IS_FOLLOWING_EXTRA, false);
+        intent.putExtra(USER_EXTRA, Parcels.wrap(user));
+        startActivity(intent);
+    }
+
+    @Override
+    public void onFollowingClicked(User user) {
+        Intent intent = new Intent(this, UserListActivity.class);
+        intent.putExtra(IS_FOLLOWING_EXTRA, true);
         intent.putExtra(USER_EXTRA, Parcels.wrap(user));
         startActivity(intent);
     }

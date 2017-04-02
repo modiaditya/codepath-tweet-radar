@@ -108,6 +108,20 @@ public class TwitterClient extends OAuthBaseClient {
         client.post(apiUrl, params, handler);
     }
 
+    public void followUser(boolean follow, Long userId, AsyncHttpResponseHandler handler) {
+        String apiUrl = getApiUrl(follow ? "friendships/create.json" : "friendships/destroy.json");
+        RequestParams params = new RequestParams();
+        params.put("user_id", userId);
+        getClient().post(apiUrl, params, handler);
+    }
+
+    public void getFollowersList(Long userId, AsyncHttpResponseHandler handler) {
+        String apiUrl = getApiUrl("friends/list.json");
+        RequestParams params = new RequestParams();
+        params.put("user_id", userId);
+        getClient().get(apiUrl, params, handler);
+    }
+
     public static Boolean isNetworkAvailable(Context context) {
         ConnectivityManager connectivityManager
             = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);

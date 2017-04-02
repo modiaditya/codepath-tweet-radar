@@ -45,6 +45,7 @@
 
         <activity android:name=".activities.ProfileActivity"></activity>
         <activity android:name=".activities.SearchActivity" />
+        <activity android:name=".activities.UserListActivity"/>
         <receiver
             android:name=".receivers.NetworkStateReceiver"
             android:label="NetworkChangeReceiver" >

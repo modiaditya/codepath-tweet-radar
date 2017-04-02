@@ -5,9 +5,13 @@ import com.raizlabs.android.dbflow.annotation.Column;
 import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
 import com.raizlabs.android.dbflow.structure.BaseModel;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.parceler.Parcel;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by amodi on 3/23/17.
@@ -58,9 +62,12 @@ public class User extends BaseModel {
             user.isVerified = jsonObject.getBoolean("verified");
             user.followersCount = jsonObject.getInt("followers_count");
             user.isFollowing = jsonObject.getBoolean("following");
-            if (jsonObject.getString("profile_banner_url") != null) {
+            if (jsonObject.has("profile_banner_url")) {
                 user.profileImageBackgroundUrl = jsonObject.getString("profile_banner_url");
             }
+//            if (jsonObject.getString("profile_banner_url") != null) {
+//
+//            }
             user.followingCount = jsonObject.getInt("friends_count");
             user.description = jsonObject.getString("description");
 
@@ -68,5 +75,23 @@ public class User extends BaseModel {
             e.printStackTrace();
         }
         return user;
+    }
+
+    public static List<User> fromJSONArray(JSONArray array) {
+        List<User> users = new ArrayList<>();
+
+        for (int index = 0; index < array.length(); ++index) {
+            try {
+                User user = User.fromJSON(array.getJSONObject(index));
+                if (users != null) {
+                    users.add(user);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+                continue;
+            }
+        }
+
+        return users;
     }
 }
