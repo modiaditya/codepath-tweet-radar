@@ -31,7 +31,7 @@ import static com.aditya.tweetradar.activities.TweetTimelineActivity.USER_EXTRA;
  * Created by amodi on 4/2/17.
  */
 
-public abstract class UserListFragment extends Fragment {
+public abstract class BaseUserListFragment extends Fragment {
 
     @BindView(R.id.rv_user) RecyclerView recyclerView;
     EndlessRecyclerViewScrollListener endlessRecyclerViewScrollListener;
@@ -81,7 +81,7 @@ public abstract class UserListFragment extends Fragment {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 try {
-                    UserListFragment.this.nextCursor = response.getLong("next_cursor");
+                    BaseUserListFragment.this.nextCursor = response.getLong("next_cursor");
                     List<User> users = User.fromJSONArray(response.getJSONArray("users"));
                     personAdapter.addUsers(users);
                     personAdapter.notifyDataSetChanged();

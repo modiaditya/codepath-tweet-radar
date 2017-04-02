@@ -3,19 +3,25 @@ package com.aditya.tweetradar.fragments;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.content.res.AppCompatResources;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import com.aditya.tweetradar.R;
+import com.aditya.tweetradar.TweetRadarApplication;
 import com.aditya.tweetradar.helpers.Formatters;
 import com.aditya.tweetradar.models.User;
 import com.bumptech.glide.Glide;
+import com.loopj.android.http.JsonHttpResponseHandler;
+import cz.msebera.android.httpclient.Header;
+import org.json.JSONObject;
 import org.parceler.Parcels;
 
 import static com.aditya.tweetradar.activities.TweetTimelineActivity.USER_EXTRA;
@@ -34,6 +40,7 @@ public class ProfileHeaderFragment extends Fragment {
     @BindView(R.id.tvDescription) TextView description;
     @BindView(R.id.tvFollowersCount) TextView followerCount;
     @BindView(R.id.tvFollowingCount) TextView followingCount;
+    @BindView(R.id.ivFollowingButton) Button followingButton;
     @BindView(R.id.linearFollowers) LinearLayout follower;
     @BindView(R.id.linearFollowing) LinearLayout following;
 
@@ -98,6 +105,35 @@ public class ProfileHeaderFragment extends Fragment {
                 onFollowingInfoClickedListener.onFollowingClicked(user);
             }
         });
+
+        if (user.isFollowing) {
+            followingButton.setBackground(AppCompatResources.getDrawable(getActivity(), R.drawable.ic_following));
+            followingButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    TweetRadarApplication.getTwitterClient().followUser(false, user.id, new JsonHttpResponseHandler() {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                            followingButton.setBackground(AppCompatResources.getDrawable(getActivity(), R.drawable.ic_not_following));
+                        }
+                    });
+                }
+            });
+
+        } else {
+            followingButton.setBackground(AppCompatResources.getDrawable(getActivity(), R.drawable.ic_not_following));
+            followingButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    TweetRadarApplication.getTwitterClient().followUser(true, user.id, new JsonHttpResponseHandler() {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                            followingButton.setBackground(AppCompatResources.getDrawable(getActivity(), R.drawable.ic_following));
+                        }
+                    });
+                }
+            });
+        }
 
         return v;
     }

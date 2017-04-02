@@ -12,7 +12,7 @@ import static com.aditya.tweetradar.activities.TweetTimelineActivity.USER_EXTRA;
  * Created by amodi on 4/2/17.
  */
 
-public class UserFollowingListFragment extends UserListFragment {
+public class UserFollowingListFragment extends BaseUserListFragment {
 
 
     public static UserFollowingListFragment newInstance(User user) {

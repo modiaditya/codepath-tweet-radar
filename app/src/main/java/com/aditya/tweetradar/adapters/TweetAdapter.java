@@ -43,6 +43,7 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
     Context context;
     User loggedInUser;
     OnUserClickListener onUserClickListener;
+    TweetComposeDialogFragment.TweetComposeDialogFragmentListener tweetComposeDialogFragmentListener;
 
     public interface OnUserClickListener {
         void onUserClick(User user);
@@ -129,6 +130,10 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
 
     public void setOnUserClickListener(OnUserClickListener onUserClickListener) {
         this.onUserClickListener = onUserClickListener;
+    }
+
+    public void setTweetComposeDialogFragmentListener(TweetComposeDialogFragment.TweetComposeDialogFragmentListener tweetComposeDialogFragmentListener) {
+        this.tweetComposeDialogFragmentListener = tweetComposeDialogFragmentListener;
     }
 
     @Override
@@ -297,8 +302,13 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
                     final int position = getAdapterPosition();
                     final Tweet tweet = tweets.get(position);
 
-                    TweetComposeDialogFragment.newInstance(loggedInUser, tweet.id, tweet.user.screenName)
-                                              .show(((FragmentActivity)context).getSupportFragmentManager(), "reply_tweet");
+                    TweetComposeDialogFragment fragment = TweetComposeDialogFragment.newInstance(loggedInUser,
+                                                                                                 tweet.id,
+                                                                                                 tweet.user.screenName);
+                    fragment.setTweetComposeDialogFragmentListener(tweetComposeDialogFragmentListener);
+                    fragment.show(((FragmentActivity)context).getSupportFragmentManager(), "reply_tweet");
+
+
                 }
             });
         }

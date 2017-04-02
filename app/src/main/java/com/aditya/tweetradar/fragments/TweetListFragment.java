@@ -73,6 +73,7 @@ public abstract class TweetListFragment extends Fragment
         this.tweetAdapter = new TweetAdapter(getContext());
         this.onUserClickListener = (TweetAdapter.OnUserClickListener) getActivity();
         this.tweetAdapter.setOnUserClickListener(this.onUserClickListener);
+        this.tweetAdapter.setTweetComposeDialogFragmentListener(this);
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
                                                                                 getResources().getConfiguration().orientation);
         recyclerView.addItemDecoration(dividerItemDecoration);
@@ -96,6 +97,7 @@ public abstract class TweetListFragment extends Fragment
                 fetchTweets();
             }
         });
+        tweetAdapter.setLoggedInUser(user);
         composeTweet.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -107,14 +109,7 @@ public abstract class TweetListFragment extends Fragment
             }
         });
 
-//        FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-//        // Replace the contents of the container with the new fragment
-//        ft.replace(R.id.fragment_container, HomeTimelineFragment.newInstance());
-//        // or ft.add(R.id.your_placeholder, new FooFragment());
-//        // Complete the changes added above
-//        ft.commit();
         fetchTweets();
-        //recyclerViewScrollListener();
         return view;
     }
 

@@ -108,8 +108,6 @@ public class TweetComposeDialogFragment extends DialogFragment implements DraftD
             prefilledTweetBody = getArguments().getString(TWEET_BODY_EXTRA, prefilledTweetBody);
             tweetId = getArguments().getLong(TWEET_ID_EXTRA, -1);
         }
-        //tweetComposeDialogFragmentListener = (TweetComposeDialogFragmentListener) ;
-
     }
 
     public void setTweetComposeDialogFragmentListener(TweetComposeDialogFragmentListener tweetComposeDialogFragmentListener) {
