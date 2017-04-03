@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_margin="12dp"
+                android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/tvPosition"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
+        tools:hint="1"/>
+
+    <TextView
+        android:id="@+id/tvTrendName"
+        android:layout_toRightOf="@id/tvPosition"
+        android:layout_toEndOf="@id/tvPosition"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:textAppearance="@style/Base.TextAppearance.AppCompat.Headline"
+        tools:text="#codepath"/>
+
+    <TextView
+        android:id="@+id/tvTweetCount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tvTrendName"
+        android:layout_alignLeft="@id/tvTrendName"
+        android:layout_marginTop="4dp"
+        tools:text="12234 Tweets"/>
+
+</RelativeLayout>

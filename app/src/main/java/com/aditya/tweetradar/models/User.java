@@ -65,9 +65,6 @@ public class User extends BaseModel {
             if (jsonObject.has("profile_banner_url")) {
                 user.profileImageBackgroundUrl = jsonObject.getString("profile_banner_url");
             }
-//            if (jsonObject.getString("profile_banner_url") != null) {
-//
-//            }
             user.followingCount = jsonObject.getInt("friends_count");
             user.description = jsonObject.getString("description");
 

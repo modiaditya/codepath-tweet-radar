@@ -14,9 +14,11 @@ import com.aditya.tweetradar.R;
 import com.aditya.tweetradar.adapters.ProfileViewPagerAdapter;
 import com.aditya.tweetradar.adapters.TweetAdapter;
 import com.aditya.tweetradar.fragments.ProfileHeaderFragment;
+import com.aditya.tweetradar.fragments.SearchTimelineFragment;
 import com.aditya.tweetradar.models.User;
 import org.parceler.Parcels;
 
+import static com.aditya.tweetradar.activities.SearchActivity.SEARCH_QUERY_EXTRA;
 import static com.aditya.tweetradar.activities.TweetTimelineActivity.USER_EXTRA;
 import static com.aditya.tweetradar.activities.UserListActivity.IS_FOLLOWING_EXTRA;
 
@@ -25,7 +27,7 @@ import static com.aditya.tweetradar.activities.UserListActivity.IS_FOLLOWING_EXT
  */
 
 public class ProfileActivity extends AppCompatActivity implements TweetAdapter.OnUserClickListener,
-ProfileHeaderFragment.OnFollowingInfoClickedListener {
+ProfileHeaderFragment.OnFollowingInfoClickedListener, SearchTimelineFragment.OnSearchListener {
 
     @BindView(R.id.toolbar) Toolbar toolbar;
     @BindView(R.id.tabLayout) TabLayout tabLayout;
@@ -54,6 +56,13 @@ ProfileHeaderFragment.OnFollowingInfoClickedListener {
         Intent intent = new Intent(this, UserListActivity.class);
         intent.putExtra(IS_FOLLOWING_EXTRA, true);
         intent.putExtra(USER_EXTRA, Parcels.wrap(user));
+        startActivity(intent);
+    }
+
+    @Override
+    public void onSearch(String query) {
+        Intent intent = new Intent(this, SearchActivity.class);
+        intent.putExtra(SEARCH_QUERY_EXTRA, query);
         startActivity(intent);
     }
 

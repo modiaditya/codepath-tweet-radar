@@ -32,7 +32,6 @@ public class FavoriteTimelineFragment extends TweetListFragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         View view = super.onCreateView(inflater, container, savedInstanceState);
-        composeTweet.setVisibility(View.GONE);
         return view;
     }
 

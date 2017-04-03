@@ -9,8 +9,6 @@ import com.loopj.android.http.RequestParams;
 import org.scribe.builder.api.Api;
 import org.scribe.builder.api.TwitterApi;
 
-import java.net.URLEncoder;
-
 /**
  * Created by amodi on 3/22/17.
  */
@@ -67,7 +65,7 @@ public class TwitterClient extends OAuthBaseClient {
             params.put("max_id", (maxId - 1));
         }
         if (q != null) {
-            params.put("q", URLEncoder.encode(q));
+            params.put("q", q);
         }
         client.get(apiUrl, params, handler);
     }
@@ -87,8 +85,8 @@ public class TwitterClient extends OAuthBaseClient {
         client.post(apiUrl, params, handler);
     }
 
-    public void postFavorite(Long id, AsyncHttpResponseHandler handler) {
-        String apiUrl = getApiUrl("favorites/create.json");
+    public void postFavorite(boolean favorite, Long id, AsyncHttpResponseHandler handler) {
+        String apiUrl = getApiUrl(favorite ? "favorites/create.json" : "favorites/destroy.json");
         RequestParams params = new RequestParams();
         params.put("id", id);
         client.post(apiUrl, params, handler);
@@ -132,6 +130,13 @@ public class TwitterClient extends OAuthBaseClient {
         if (nextCursor != null) {
             params.put("cursor", nextCursor);
         }
+        getClient().get(apiUrl, params, handler);
+    }
+
+    public void getTrending(AsyncHttpResponseHandler handler) {
+        String apiUrl = getApiUrl("trends/place.json");
+        RequestParams params = new RequestParams();
+        params.put("id", 1); // Worldwide
         getClient().get(apiUrl, params, handler);
     }
 

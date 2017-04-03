@@ -21,7 +21,7 @@
             android:layout_height="?attr/actionBarSize"
             app:titleTextColor="@android:color/white"
             android:background="@color/colorPrimary"
-            app:layout_scrollFlags="scroll|enterAlways"/>
+            app:layout_scrollFlags="scroll|enterAlways|snap"/>
 
         <android.support.design.widget.TabLayout
             android:id="@+id/tabLayout"
@@ -42,5 +42,15 @@
         android:layout_height="match_parent"
         android:background="@android:color/white"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fabTweetCompose"
+        android:src="@drawable/ic_tweet_compose"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="16dp"
+        android:layout_marginBottom="30dp"
+        app:backgroundTint="@color/colorPrimary"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 
 </android.support.design.widget.CoordinatorLayout>

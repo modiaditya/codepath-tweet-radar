@@ -5,6 +5,7 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
@@ -12,24 +13,32 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import com.aditya.tweetradar.R;
 import com.aditya.tweetradar.TweetRadarApplication;
 import com.aditya.tweetradar.adapters.FragmentViewPagerAdapter;
 import com.aditya.tweetradar.adapters.TweetAdapter;
+import com.aditya.tweetradar.fragments.SearchTimelineFragment;
 import com.aditya.tweetradar.fragments.TweetComposeDialogFragment;
+import com.aditya.tweetradar.fragments.TweetListFragment;
+import com.aditya.tweetradar.models.Tweet;
 import com.aditya.tweetradar.models.User;
 import com.aditya.tweetradar.persistence.TweetRadarSharedPreferences;
 import com.aditya.tweetradar.receivers.NetworkStateReceiver;
 import org.parceler.Parcels;
+
+import static com.aditya.tweetradar.activities.SearchActivity.SEARCH_QUERY_EXTRA;
 
 /**
  * Created by amodi on 3/23/17.
  */
 
 public class TweetTimelineActivity extends AppCompatActivity
-    implements NetworkStateReceiver.NetworkStateReceiverListener, TweetAdapter.OnUserClickListener {
+    implements TweetComposeDialogFragment.TweetComposeDialogFragmentListener,
+    NetworkStateReceiver.NetworkStateReceiverListener, TweetAdapter.OnUserClickListener, SearchTimelineFragment.OnSearchListener
+     {
     private static final String TAG = TweetTimelineActivity.class.getSimpleName();
 
     public static final String USER_EXTRA = "user_extra";
@@ -38,6 +47,7 @@ public class TweetTimelineActivity extends AppCompatActivity
     @BindView(R.id.toolbar) Toolbar toolbar;
     @BindView(R.id.tabLayout) TabLayout tabLayout;
     @BindView(R.id.viewPager) ViewPager viewPager;
+    @BindView(R.id.fabTweetCompose) FloatingActionButton composeTweet;
 
     NetworkStateReceiver networkStateReceiver;
     Snackbar noInternetSnackbar;
@@ -63,6 +73,19 @@ public class TweetTimelineActivity extends AppCompatActivity
         startActivity(intent);
     }
 
+    @Override
+    public void onTweet(Tweet tweet) {
+        TweetListFragment fragment = (TweetListFragment) (fragmentViewPagerAdapter.registeredFragments.get(0));
+        fragment.onTweet(tweet);
+    }
+
+    @Override
+    public void onSearch(String query) {
+        Intent intent = new Intent(this, SearchActivity.class);
+        intent.putExtra(SEARCH_QUERY_EXTRA, query);
+        startActivity(intent);
+    }
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -78,6 +101,17 @@ public class TweetTimelineActivity extends AppCompatActivity
         tabLayout.setupWithViewPager(viewPager);
         networkStateReceiver = new NetworkStateReceiver();
         this.registerReceiver(networkStateReceiver, new IntentFilter(android.net.ConnectivityManager.CONNECTIVITY_ACTION));
+        networkStateReceiver.addListener(new NetworkStateReceiver.NetworkStateReceiverListener() {
+            @Override
+            public void networkAvailable() {
+                hideNoInternetSnackbar();
+            }
+
+            @Override
+            public void networkUnavailable() {
+                showNoInternetSnackbar();
+            }
+        });
 
         // handling implicit intent
         String action = intent.getAction();
@@ -97,6 +131,8 @@ public class TweetTimelineActivity extends AppCompatActivity
             }
         }
 
+        setupFAB();
+
     }
 
     private void setupToolbarProperties() {
@@ -108,6 +144,20 @@ public class TweetTimelineActivity extends AppCompatActivity
                 return onOptionsItemSelected(item);
             }
         });
+    }
+
+    private void setupFAB() {
+        composeTweet.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                TweetComposeDialogFragment fragment = TweetComposeDialogFragment.newInstance(loggedInUser,
+                                                                                             null,
+                                                                                             null);
+                fragment.setTweetComposeDialogFragmentListener(TweetTimelineActivity.this);
+                fragment.show(getSupportFragmentManager(), "compose");
+            }
+        });
+
     }
 
     @Override
@@ -144,9 +194,9 @@ public class TweetTimelineActivity extends AppCompatActivity
     }
 
 
-    private void showNoInternetSnackbar() {
+    public void showNoInternetSnackbar() {
         if (noInternetSnackbar == null) {
-            //noInternetSnackbar = Snackbar.make(coordinatorLayout, getString(R.string.no_internet), Snackbar.LENGTH_INDEFINITE);
+            noInternetSnackbar = Snackbar.make(coordinatorLayout, getString(R.string.no_internet), Snackbar.LENGTH_INDEFINITE);
             noInternetSnackbar.show();
         }
     }

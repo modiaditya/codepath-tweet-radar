@@ -14,7 +14,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import com.aditya.tweetradar.R;
 import com.aditya.tweetradar.TweetRadarApplication;
+import com.aditya.tweetradar.fragments.SearchTimelineFragment;
 import com.aditya.tweetradar.fragments.TweetComposeDialogFragment;
+import com.aditya.tweetradar.helpers.PatternEditableBuilder;
 import com.aditya.tweetradar.models.Tweet;
 import com.aditya.tweetradar.models.User;
 import com.bumptech.glide.Glide;
@@ -30,6 +32,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
+import java.util.regex.Pattern;
 
 /**
  * Created by amodi on 3/24/17.
@@ -44,6 +47,7 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
     User loggedInUser;
     OnUserClickListener onUserClickListener;
     TweetComposeDialogFragment.TweetComposeDialogFragmentListener tweetComposeDialogFragmentListener;
+    SearchTimelineFragment.OnSearchListener onSearchListener;
 
     public interface OnUserClickListener {
         void onUserClick(User user);
@@ -126,6 +130,24 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
             }
         });
 
+        new PatternEditableBuilder()
+            .addPattern(Pattern.compile("\\@(\\w+)"), ContextCompat.getColor(context, R.color.colorPrimary),
+                            new PatternEditableBuilder.SpannableClickedListener() {
+                                @Override
+                                public void onSpanClicked(String text) {
+                                    onSearchListener.onSearch(text);
+                                }
+                            }).into(tweetViewHolder.text);
+
+        new PatternEditableBuilder()
+            .addPattern(Pattern.compile("\\#(\\w+)"), ContextCompat.getColor(context, R.color.colorPrimary),
+                        new PatternEditableBuilder.SpannableClickedListener() {
+                            @Override
+                            public void onSpanClicked(String text) {
+                                onSearchListener.onSearch(text);
+                            }
+                        }).into(tweetViewHolder.text);
+
     }
 
     public void setOnUserClickListener(OnUserClickListener onUserClickListener) {
@@ -143,6 +165,10 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
         } else {
             return TWEET_ITEM_TYPE;
         }
+    }
+
+    public void setOnSearchListener(SearchTimelineFragment.OnSearchListener onSearchListener) {
+        this.onSearchListener = onSearchListener;
     }
 
     @Override
@@ -252,7 +278,7 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
                     final int position = getAdapterPosition();
                     Tweet tweet = tweets.get(position);
 
-                    TweetRadarApplication.getTwitterClient().postFavorite(tweet.id, new JsonHttpResponseHandler() {
+                    TweetRadarApplication.getTwitterClient().postFavorite(!tweet.isFavorited, tweet.id, new JsonHttpResponseHandler() {
                         @Override
                         public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                             Tweet tweetResponse = Tweet.fromJSON(response);
@@ -312,7 +338,6 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
                 }
             });
         }
-
     }
 
     class LoadingViewHolder extends ViewHolder {

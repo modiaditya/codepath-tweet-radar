@@ -2,7 +2,6 @@ package com.aditya.tweetradar.fragments;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DividerItemDecoration;
@@ -17,6 +16,7 @@ import butterknife.ButterKnife;
 import com.aditya.tweetradar.R;
 import com.aditya.tweetradar.activities.TweetTimelineActivity;
 import com.aditya.tweetradar.adapters.TweetAdapter;
+import com.aditya.tweetradar.client.TwitterClient;
 import com.aditya.tweetradar.listeners.EndlessRecyclerViewScrollListener;
 import com.aditya.tweetradar.models.Tweet;
 import com.aditya.tweetradar.models.Tweet_Table;
@@ -40,13 +40,13 @@ public abstract class TweetListFragment extends Fragment
 
     @BindView(R.id.rv_timeline) RecyclerView recyclerView;
     @BindView(R.id.srlTimeline) SwipeRefreshLayout swipeRefreshLayout;
-    @BindView(R.id.fabTweetCompose) @Nullable FloatingActionButton composeTweet;
 
     TweetAdapter tweetAdapter;
     RecyclerView.LayoutManager layoutManager;
     EndlessRecyclerViewScrollListener endlessRecyclerViewScrollListener;
     User user;
     TweetAdapter.OnUserClickListener onUserClickListener;
+    SearchTimelineFragment.OnSearchListener onSearchListener;
 
     @Override
     public void onTweet(Tweet tweet) {
@@ -64,10 +64,6 @@ public abstract class TweetListFragment extends Fragment
         if (getArguments() != null && getArguments().getParcelable(TweetTimelineActivity.USER_EXTRA) != null) {
             user = Parcels.unwrap(getArguments().getParcelable(TweetTimelineActivity.USER_EXTRA));
         }
-
-
-
-        //toolbar.setLogo(R.drawable.ic_twitter_social);
 
         this.layoutManager = new LinearLayoutManager(getContext());
         this.tweetAdapter = new TweetAdapter(getContext());
@@ -98,33 +94,24 @@ public abstract class TweetListFragment extends Fragment
             }
         });
         tweetAdapter.setLoggedInUser(user);
-        composeTweet.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                TweetComposeDialogFragment fragment = TweetComposeDialogFragment.newInstance(user,
-                                                                                             null,
-                                                                                             null);
-                fragment.setTweetComposeDialogFragmentListener(TweetListFragment.this);
-                fragment.show(getActivity().getSupportFragmentManager(), "compose");
-            }
-        });
+        this.onSearchListener = (SearchTimelineFragment.OnSearchListener) getActivity();
 
+        tweetAdapter.setOnSearchListener(this.onSearchListener);
         fetchTweets();
         return view;
     }
 
     private void fetchTweets(Long maxId) {
-//        if (!TwitterClient.isNetworkAvailable(getContext())) {
-//            //showNoInternetSnackbar();
-//            if (tweetAdapter.getItemCount() <= 2) {
-//                loadTweetsFromDatabase();
-//            }
-//            return;
-//        }
+        if (!TwitterClient.isNetworkAvailable(getContext())) {
+
+            if (tweetAdapter.getItemCount() <= 2) {
+                loadTweetsFromDatabase();
+            }
+            return;
+        }
         fetchTweets(maxId, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
-                //hideNoInternetSnackbar();
                 swipeRefreshLayout.setRefreshing(false);
                 List<Tweet> tweets = Tweet.fromJSONArray(response);
                 tweetAdapter.addTweets(tweets);
@@ -152,18 +139,4 @@ public abstract class TweetListFragment extends Fragment
         tweetAdapter.addTweets(SQLite.select().from(Tweet.class).orderBy(Tweet_Table.id, false).queryList());
         tweetAdapter.notifyDataSetChanged();
     }
-
-
-    //    private void recyclerViewScrollListener() {
-//        recyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
-//            @Override
-//            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-//                if (dy < 0) {
-//                    composeTweet.show();
-//                } else if (dy > 0){
-//                    composeTweet.hide();
-//                }
-//            }
-//        });
-//    }
 }

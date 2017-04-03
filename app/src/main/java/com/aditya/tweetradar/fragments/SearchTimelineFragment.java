@@ -2,6 +2,7 @@ package com.aditya.tweetradar.fragments;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,9 +17,13 @@ import org.json.JSONObject;
  */
 
 public class SearchTimelineFragment extends TweetListFragment {
-
+    private static final String TAG = SearchTimelineFragment.class.getSimpleName();
     private static final String SEARCH_QUERY_EXTRA = "search_query_extra";
     private String searchQuery;
+
+    public interface OnSearchListener {
+        void onSearch(String query);
+    }
 
     public static SearchTimelineFragment newInstance(String searchQuery) {
 
@@ -40,7 +45,6 @@ public class SearchTimelineFragment extends TweetListFragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         View v = super.onCreateView(inflater, container, savedInstanceState);
-        composeTweet.setVisibility(View.GONE);
         return v;
     }
 
@@ -54,6 +58,11 @@ public class SearchTimelineFragment extends TweetListFragment {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                Log.e(TAG, "Failed to fetch search query results", throwable);
             }
         });
     }

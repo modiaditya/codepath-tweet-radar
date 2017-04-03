@@ -32,7 +32,6 @@ public class UserTweetTimelineFragment extends TweetListFragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         View v = super.onCreateView(inflater, container, savedInstanceState);
-        composeTweet.setVisibility(View.GONE);
         return v;
     }
 

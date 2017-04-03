@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.util.SparseArray;
 import com.aditya.tweetradar.R;
 import com.aditya.tweetradar.fragments.HomeTimelineFragment;
 import com.aditya.tweetradar.fragments.MentionTimelineFragment;
@@ -19,6 +20,7 @@ import static com.aditya.tweetradar.activities.TweetTimelineActivity.USER_EXTRA;
 
 public class FragmentViewPagerAdapter extends FragmentPagerAdapter {
 
+    public SparseArray<Fragment> registeredFragments;
     Context context;
     User user;
 
@@ -26,6 +28,7 @@ public class FragmentViewPagerAdapter extends FragmentPagerAdapter {
         super(fm);
         this.context = context;
         this.user = user;
+        this.registeredFragments = new SparseArray<>();
     }
 
     @Override
@@ -37,10 +40,12 @@ public class FragmentViewPagerAdapter extends FragmentPagerAdapter {
             case 0:
                 HomeTimelineFragment homeTimelineFragment = HomeTimelineFragment.newInstance();
                 fragment = homeTimelineFragment;
+                registeredFragments.put(0, fragment);
                 break;
             case 1:
                 MentionTimelineFragment mentionTimelineFragment = MentionTimelineFragment.newInstance();
                 fragment = mentionTimelineFragment;
+                registeredFragments.put(1, fragment);
                 break;
         }
         fragment.setArguments(bundle);

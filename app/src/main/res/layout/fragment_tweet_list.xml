@@ -21,17 +21,6 @@
 
     </android.support.v4.widget.SwipeRefreshLayout>
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fabTweetCompose"
-        android:src="@drawable/ic_tweet_compose"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="16dp"
-        android:layout_marginBottom="30dp"
-        app:backgroundTint="@color/colorPrimary"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
-
 </FrameLayout>
 
 
